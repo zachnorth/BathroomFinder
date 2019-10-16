@@ -21,8 +21,11 @@
 <input type="text" name="textbox1" id="textbox1" />
 <button type="button" onclick="whereAmI()">Submit</button>
 
+<input type="text" name="test" />
 
 <div id="map"></div>
+
+
 
 <script>
 
@@ -55,7 +58,7 @@
         map: map
       });
       marker.setMap(map);
-      
+
     }, function(){
       handleLocationError(true, infoWindow, map.getCenter());
 
