@@ -2,41 +2,155 @@
 <html>
 <head>
 
-  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="CSS/FormStyles.css">
+<link rel="stylesheet" href="CSS/styles.css">
+
 
   <title>Bathroom Finder</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
 
-
-  </style>
 
 </head>
 <body>
 
-<div id="wrapper">
-
 <div id="map"></div>
 
-<div id="submit_form">
-  <form action="connect.php" method="post">
-      City : <input type="text" name="Location_City"><br><br>
-      State: <input type="text" name="Location_State"><br><br>
-      Name : <input type="text" name="Location_Name"><br><br>
-      Pay : <input type="text" name="Location_Pay"><br><br>
-      latitude : <input type="text" name="Location_Latitude"><br><br>
-      Longitude : <input type="text" name="Location_Longitude"><br><br>
-      Rating : <input type="text" name="Location_Rating"><br><br>
-      Description : <input type="text" name="Location_Descritiop"><br><br>
-      <input type="submit" value="Submit New Location">
-  </form>
-</div>
-</div>
 
 
+<button onclick="document.getElementById('id01').style.display='block'">Sign Up</button>
+<button onclick="document.getElementById('id02').style.display='block'">New Bathroom</button>
+<button onclick="document.getElementById('id03').style.display='block'">Sign In</button>
+
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none' class="close" title="Close"
+  Modal">times;</span>
+<form class="modal-content action" action="PHP/signup.php" method="post">
+  <div class="container">
+    <h1>Sign Up</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+
+    <label for="name"><b>First Name</b></label>
+    <input type="text" placeholder="Enter First Name" name="firstName" required><br>
+
+    <label for="name"><b>Last Name</b></label>
+    <input type="text" placeholder="Enter Last Name" name="lastName" required><br>
+
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" required><br>
+
+    <label for="name"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="username" required><br>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required><br>
+
+    <label for="psw-repeat"><b>Repeat Password</b></label>
+    <input type="password" placeholder="Repeat Password" name="psw-repeat" required><br>
+
+    <label for="city"><b>Home City</b></label>
+    <input type="text" placeholder="Enter Home City" name="city" required><br>
+
+
+  </label>
+
+  <p> By Creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+
+  <label>
+    <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember Me
+  </label>
+  <div class="clearfix">
+    <button type="button" onclick="document.getElementById('id01').style.display='none'"
+    class="cancelbtn">Cancel</button>
+    <button type="submit" class="signupbtn">Sign Up</button>
+  </div>
+</div>
+</form>
+</div>
+
+<div id="id02" class="modal">
+  <span onclick="document.getElementById('id02').style.display='none' class="close" title="Close"
+  Modal">times;</span>
+<form class="modal-content action" action="PHP/NewLocation.php" method="post">
+  <div class="container">
+    <h2>New Bathroom</h2>
+    <p>Please fill out the fields below to enter a new bathroom.</p>
+    <hr>
+
+    <label for="city"><b>City</b></label>
+    <input type="text" placeholder="City" name="city" required><br>
+
+    <label for="state"><b>State</b></label>
+    <input type="text" placeholder="State" name="state" required><br>
+
+    <label for="name"><b>Establishment Name</b></label>
+    <input type="text" placeholder="Name" name="est_name" required><br>
+
+    <label for="pay"><b>Pay</b></label><br>
+    Yes: <input type="radio" name="pay" id="yes" value="1"><br>
+    No: <input type="radio" name="pay" id="no" value="0"><br>
+
+    <label for="latitude"><b>Latitude</b></label>
+    <input type="text" placeholder="Latitude" name="latitude" required><br>
+
+    <label for="longitude"><b>Longitude</b></label>
+    <input type="text" placeholder="Longitude" name="longitude" required><br>
+
+    <label for="rating"><b>Rating</b></label>
+    <input type="text" placeholder="Rating" name="rating" required><br>
+
+    <label for="Description"><b>description</b></label>
+    <input type="text" placeholder="Description" name="description" required><br>
+
+    <div class="clearfix">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'"
+      class="cancelbtn">Cancel</button>
+      <button type="submit" class="signupbtn">Submit Location</button>
+    </div>
+  </div>
+</form>
+</div>
+
+<div id="id03" class="modal">
+  <span onclick="document.getElementById('id03').style.display='none' class="close" title="Close"
+  Modal">times;</span>
+<form class="modal-content action" action="PHP/SignIn.php" method="post">
+  <div class="container">
+    <h3>Sign In</h3>
+    <hr>
+
+    <label for="username"><b>Username</b></label>
+    <input type="text" placeholder="UserName" name="username" required><br>
+
+    <label for="password"><b>Password</b></label>
+    <input type="text" placeholder="Password" name="password" required><br>
+
+
+<div class="clearfix">
+  <button type="button" onclick="document.getElementById('id03').style.display='none'"
+  class="cancelbtn">Cancel</button>
+  <button type="submit" class="signupbtn">Sign In</button>
+</div>
+</div>
+</form>
+</div>
+
+<script>
+
+var modal = document.getElementById('id01');
+var modal1 = document.getElementById('id02');
+var modal2 = document.getElementById('id03');
+
+window.onclick = function(event) {
+  if (event.target == modal || event.target == modal1 || event.target == modal2) {
+    modal.style.display = "none";
+    modal1.style.display = "none";
+    modal2.style.display = "none";
+  }
+
+}
+
+</script>
 
 
 <script>
