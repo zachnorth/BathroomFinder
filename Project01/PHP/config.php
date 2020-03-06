@@ -1,8 +1,7 @@
 <?php     
-
 $DBHOST = 'localhost';
-$DBUSERNAME = 'zach';
-$DBPASSWORD = 'password';
-$DBNAME = 'bathroomfinder';
+$DBUSERNAME = 'Zach';
+$DBPASSWORD = '@Easy1';
+$DBNAME = 'bathroom_app';
 
 ?>

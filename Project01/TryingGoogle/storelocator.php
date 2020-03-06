@@ -16,7 +16,7 @@ if (!$connection) {
 // Set the active mySQL database
 $db_selected = mysqli_select_db($connection, $DBNAME);
 if (!$db_selected) {
-  die ("Can\'t use db : " . mysql_error());
+  die ("Can\'t use db : " . mysqli_error());
 }
 // Search the rows in the markers table
 $query = sprintf("SELECT id, name, address, lat, lng, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20",

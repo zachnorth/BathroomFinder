@@ -40,14 +40,39 @@
       var locationSelect;
 
         function initMap() {
-          var sydney = {lat: -33.863276, lng: 151.107977};
           map = new google.maps.Map(document.getElementById('map'), {
-            center: sydney,
-            zoom: 11,
-            mapTypeId: 'roadmap',
-            mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU}
+            center: {lat: -34.397, lng: 150.644},
+            zoom: 16
           });
-          infoWindow = new google.maps.InfoWindow();
+          infoWindow = new google.maps.InfoWindow;
+          if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position){
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              infoWindow.setPosition(pos);
+              infoWindow.setContent('Location Found.');
+              infoWindow.open(map);
+              map.setCenter(pos);
+              var marker = new google.maps.Marker({
+                position: pos,
+               map: map
+              });
+              marker.setMap(map);
+           }, function(){
+              handleLocationError(true, infoWindow, map.getCenter());
+            });
+         } else {
+            handleLocationError(false, infoWindow, map.getCenter());
+         }
+
+         function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+             'Error, the geolocation service has failed' : 'Your browser does not support geolocation');
+            infoWindow.open(map);
+         }
 
           searchButton = document.getElementById("searchButton").onclick = searchLocations;
 

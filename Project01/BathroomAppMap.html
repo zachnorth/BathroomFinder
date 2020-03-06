@@ -185,6 +185,15 @@ window.onclick = function(event) {
 
 </script>
 
+<script>
+  if(isset($_SESSION['message']))
+  {
+    alert("Logged In");
+  }
+</script>
+<script>
+
+</script>
 
 <script>
   var map, infoWindow;
@@ -223,6 +232,7 @@ window.onclick = function(event) {
     infoWindow.open(map);
   }
 </script>
+
 
 <script>
 var map;
