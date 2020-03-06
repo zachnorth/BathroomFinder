@@ -13,7 +13,7 @@ $rating = filter_input(INPUT_POST, 'rating');
 $description = filter_input(INPUT_POST, 'description');
 
 
-$conn = new mysqli (DBHOST, DBROOT, DBROOTPASS, DBNAME);
+$conn = new mysqli ($DBHOST, $DBUSERNAME, $DBPASSWORD, $DBNAME);
 
 if (mysqli_connect_error())
 {
@@ -30,6 +30,7 @@ else
       if($conn->query($sql))
       {
         echo"New Location Inserted Into Database";
+        header("Location:http://localhost/projects/BathroomFinder/BathroomFinder/Project01/BathroomAppMap.html");
       }
       else {
         echo"Error: ".$sql ."<br>".$conn->error;

@@ -15,10 +15,11 @@
 <div id="map"></div>
 
 
-
 <button onclick="document.getElementById('id01').style.display='block'">Sign Up</button>
 <button onclick="document.getElementById('id02').style.display='block'">New Bathroom</button>
 <button onclick="document.getElementById('id03').style.display='block'">Sign In</button>
+<button onclick="document.getElementById('id04').style.display='block'">Find Bathrooms</button>
+
 
 <div id="id01" class="modal">
   <span onclick="document.getElementById('id01').style.display='none' class="close" title="Close"
@@ -135,11 +136,43 @@
 </form>
 </div>
 
+<div id="id04" class="modal">
+  <span onclick="document.getElementById('id04').style.display='none' class="close" title="Close"
+  Modal">times;</span>
+  <form class="modal-content action" action="PHP/FindClosestBathroom.php" method="get">
+  <div class="container">
+    <h4>Find Bathrooms</h4>
+    <hr>
+
+    <label for="latitude"><b>Latitude</b></label>
+    <input type="number" placeholder="0.0" step="0.0001" min="-90" max="90"><br>
+
+    <label for="longitude"><b>Longitude</b></label>
+    <input type="number" placeholder="0.0" step="0.0001" min="-90" max="90"><br>
+
+    <label for="distance"><b>Distance</b></label>
+    <select>
+      <option value="10">10 Miles</option>
+      <option value="5">5 Miles</option>
+      <option value="2">2 Miles</option>
+      <option value="1">1 Miles</option>
+    </select>
+
+    <div class="clearfix">
+      <button type="button" onclick="document.getElementById('id04').style.display='none'"
+      class="cancelbtn">Cancel</button>
+      <button type="submit" class="signupbtn">Find Bathrooms</button>
+    </div>
+  </div>
+</form>
+</div>
+
 <script>
 
 var modal = document.getElementById('id01');
 var modal1 = document.getElementById('id02');
 var modal2 = document.getElementById('id03');
+var modal3 = document.getElementById('id04');
 
 window.onclick = function(event) {
   if (event.target == modal || event.target == modal1 || event.target == modal2) {
