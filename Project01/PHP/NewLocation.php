@@ -30,7 +30,7 @@ else
       if($conn->query($sql))
       {
         echo"New Location Inserted Into Database";
-        header("Location:http://localhost/projects/BathroomFinder/BathroomFinder/Project01/BathroomAppMap.html");
+        header("Location:http://localhost/projects/Bathroom_Finder/BathroomFinder/Project01/BathroomAppMapLoggedIn.html");
       }
       else {
         echo"Error: ".$sql ."<br>".$conn->error;

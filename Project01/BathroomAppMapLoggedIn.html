@@ -2,15 +2,19 @@
 <html>
 <head>
 
-<link rel="stylesheet" href="CSS/FormStyles.css">
-<link rel="stylesheet" href="CSS/styles.css">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+    <link rel="stylesheet" href="CSS/FormStyles.css">
+    <link rel="stylesheet" href="CSS/styles.css">
 
 
   <title>Bathroom Finder</title>
 
 
 </head>
-<body>
+<body onload="initMap()">
+
 
 <div id="map"></div>
 
@@ -19,6 +23,9 @@
 <button onclick="document.getElementById('id04').style.display='block'">Find Bathrooms</button>
 
 
+<div>
+  <select id="locationSelect" style="width: 10%; "></select>
+</div>
 
 <div id="id02" class="modal">
   <span onclick="document.getElementById('id02').style.display='none' class="close" title="Close"
@@ -63,34 +70,32 @@
 </form>
 </div>
 
-
-
 <div id="id04" class="modal">
   <span onclick="document.getElementById('id04').style.display='none' class="close" title="Close"
   Modal">times;</span>
-  <form class="modal-content action" action="PHP/FindClosestBathroom.php" method="get">
+  
+  <form class="modal-content action" action="FindClosestBathroom.php" method="get">
   <div class="container">
     <h4>Find Bathrooms</h4>
     <hr>
-
-    <label for="latitude"><b>Latitude</b></label>
-    <input type="number" placeholder="0.0" step="0.0001" min="-90" max="90"><br>
-
-    <label for="longitude"><b>Longitude</b></label>
-    <input type="number" placeholder="0.0" step="0.0001" min="-90" max="90"><br>
-
-    <label for="distance"><b>Distance</b></label>
-    <select>
-      <option value="10">10 Miles</option>
-      <option value="5">5 Miles</option>
-      <option value="2">2 Miles</option>
-      <option value="1">1 Miles</option>
-    </select>
+    <br>
+      <label for="raddressInput">Search location:</label>
+      <input type="text" id="addressInput" size="15"/>
+      <label for="radiusSelect">Radius:</label>
+      <select id="radiusSelect" label="Radius">
+          <option value="16.0934" selected>10 Miles</option>
+          <option value="8.04672">5 Miles</option>
+          <option value="3.21869">2 Miles</option>
+          <option value="1.60934">1 Mile</option>
+      </select>
+  
 
     <div class="clearfix">
       <button type="button" onclick="document.getElementById('id04').style.display='none'"
       class="cancelbtn">Cancel</button>
-      <button type="submit" class="signupbtn">Find Bathrooms</button>
+      <button type="button" id="searchButton" class="signupbtn">Find Bathrooms</button>
+      <button type="button" id="searchButton1" class="locationbtn">Use Current Location</button>
+      
     </div>
   </div>
 </form>
@@ -102,10 +107,9 @@ var modal1 = document.getElementById('id02');
 var modal3 = document.getElementById('id04');
 
 window.onclick = function(event) {
-  if (event.target == modal || event.target == modal1 || event.target == modal2) {
-    modal.style.display = "none";
+  if (event.target == modal1 || event.target == modal3) {
     modal1.style.display = "none";
-    modal2.style.display = "none";
+    modal3.style.display = "none";
   }
 
 }
@@ -113,74 +117,210 @@ window.onclick = function(event) {
 </script>
 
 <script>
+  var map;
+  var markers = [];
+  var infoWindow;
+  var locationSelect;
+  var current_position;
 
-</script>
-
-<script>
-  var map, infoWindow;
   function initMap() {
-  map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -34.397, lng: 150.644},
-    zoom: 16
+    zoom: 13,
+    mapTypeId: 'roadmap',
+    mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROWDOWN_MENU}
   });
+
   infoWindow = new google.maps.InfoWindow;
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position){
-      var pos = {
+
+  if(navigator.geolocation) 
+  {
+    navigator.geolocation.getCurrentPosition(function(position)
+    {
+      var pos = 
+      {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
+      current_position = pos;
       infoWindow.setPosition(pos);
       infoWindow.setContent('Location Found.');
       infoWindow.open(map);
       map.setCenter(pos);
-      var marker = new google.maps.Marker({
-        position: pos,
-        map: map
-      });
+      var marker = new google.maps.Marker(
+        {
+          position: pos,
+          map: map
+        });
       marker.setMap(map);
+      markers.push(marker);
     }, function(){
       handleLocationError(true, infoWindow, map.getCenter());
     });
   } else {
     handleLocationError(false, infoWindow, map.getCenter());
   }
-}
+
   function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
       'Error, the geolocation service has failed' : 'Your browser does not support geolocation');
     infoWindow.open(map);
   }
-</script>
 
 
-<script>
-var map;
-function whereAmI() {
-  var locationName = document.getElementById("textbox1").value;
-  var geocoder = new google.maps.Geocoder();
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 0, lng: 0},
-    zoom: 8
-  });
-  geocoder.geocode({'address': locationName}, function(results, status) {
-    if (status === 'OK') {
-      map.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        position: results[0].geometry.location,
-        map: map
+
+  searchButton = document.getElementById('searchButton').onclick = searchLocations;
+  searchButton1 = document.getElementById('searchButton1').onclick = searchLocationsNearHelper;
+
+  locationSelect = document.getElementById('locationSelect');
+  locationSelect.onchange = function() 
+  {
+      var markerNum = locationSelect.options[locationSelect.selectedIndex].value;
+      if(markerNum != "none"){
+          google.maps.event.trigger(markers[markerNum], 'click');
+      }
+    };
+  }
+
+  function searchLocationsNearHelper()
+  {
+    //createMarker(new google.maps.LatLng(current_position.lat, current_position.lng), "Current Position", "Where You Are Standing");
+    searchLocationsNear(new google.maps.LatLng(current_position.lat, current_position.lng));
+  }
+
+  function searchLocations()
+  {
+      var address = document.getElementById('addressInput').value;
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({address: address}, function(results, status)
+      {
+          if(status == google.maps.GeocoderStatus.OK)
+          {
+            searchLocationsNear(results[0].geometry.location);
+          }
+          else
+          {
+            alert(address + 'not found');
+          }
       });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
+  }
+  
+  function clearLocations()
+  {
+      infoWindow.close();
+      for(var i = 0; i < markers.length; i++)
+      {
+          markers[i].setMap(null);
+      }
+      markers.length = 0;
+
+      locationSelect.innerHTML = "";
+      var option = document.createElement("option");
+      option.value = "none";
+      option.innerHTML = "See all results:";
+      locationSelect.appendChild(option);
+  }
+
+  function searchLocationsNear(center)
+  {
+      document.getElementById('id04').style.display = 'none';
+      clearLocations();
+      createMarker(new google.maps.LatLng(center.lat, center.lng), "Current Position", "Right Here Dummy!");
+      var radius = document.getElementById('radiusSelect').value;
+      var searchUrl = "PHP/FindClosestBathroom.php?lat=" + center.lat() + "&lng=" + center.lng() + "&radius=" + radius;
+      downloadUrl(searchUrl, function(data)
+      {
+          var xml = parseXml(data);
+          var markerNodes = xml.documentElement.getElementsByTagName("marker");
+          var bounds = new google.maps.LatLngBounds();
+          for(var i = 0; i < markerNodes.length; i++)
+          {
+              var id = markerNodes[i].getAttribute("id");
+              var name = markerNodes[i].getAttribute("name");
+              var address = markerNodes[i].getAttribute("address");
+              var distance = parseFloat(markerNodes[i].getAttribute("distance"));
+              var latlng = new google.maps.LatLng(
+                  parseFloat(markerNodes[i].getAttribute("lat")),
+                  parseFloat(markerNodes[i].getAttribute("lng")));
+
+            createOption(name, distance, i);
+            createMarker(latlng, name, address);
+            bounds.extend(latlng);
+          }
+          map.fitBounds(bounds);
+          locationSelect.onchange = function()
+          {
+              var markerNum = locationSelect.options[locationSelect.selectedIndex].value;
+              google.maps.event.trigger(markers[markerNum], 'click');
+          };
+      });
+  }
+
+  function createMarker(latlng, name, address)
+  {
+    alert(address);
+      var html = "<b>" + name + "</b><br/>" + address;
+      var marker = new google.maps.Marker({
+          map: map,
+          position: latlng
+      });
+
+      google.maps.event.addListener(marker, 'click', function()
+      {
+          infoWindow.setContent(html);
+          infoWindow.open(map, marker);
+      });
+      markers.push(marker);
+  }
+
+  function createOption(name, distance, num)
+  {
+      var option = document.createElement("OPTION");
+      option.value = num;
+      option.innerHTML = name;
+      locationSelect.appendChild(option);
+  }
+
+  function downloadUrl(url, callback)
+  {
+      var request = window.ActiveXObject ?
+      new ActiveXObject('Microsoft.XMLHTTP') :
+      new XMLHttpRequest;
+
+      request.onreadystatechange = function()
+      {
+          if(request.readyState == 4)
+          {
+              request.onreadystatechange = doNothing;
+              callback(request.responseText, request.status);
+          }
+      };
+
+      request.open('GET', url, true);
+      request.send(null);
+  }
+
+  function parseXml(str)
+  {
+      if(window.ActiveXObject)
+      {
+          var doc = new ActiveXObject('Microsoft.XMLDOM');
+          doc.loadXML(str);
+          return doc;
+      }
+      else if(window.DOMParser)
+      {
+          return (new DOMParser).parseFromString(str, 'text/xml');
+      }
+  }
+
+  function doNothing() {}
 </script>
 
 
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5KLkxN6PS2oQmYYC_y7Svxhuv8oIkA4o
-&callback=initMap" type="text/javascript"></script>
+&callback=initMap"></script>
 
 </body>
 </html>

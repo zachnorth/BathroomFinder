@@ -16,7 +16,7 @@ if(mysqli_num_rows($result) == 1)
 {
   echo'Logged In';
   $_SESSION['message'] = "Logged In";
-  header("Location:http://localhost/Projects/Card_Game_Current/BathroomFinder/Project01/BathroomAppMapLoggedIn.html");
+  header("Location:http://localhost/Projects/Bathroom_Finder/BathroomFinder/Project01/BathroomAppMapLoggedIn.html");
   if(isset($_SESSION['message']))
   {
     echo '<script>alert("Logged In")</script>';

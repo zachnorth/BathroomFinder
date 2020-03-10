@@ -9,3 +9,10 @@
 9,Coxcomb and Lily Boutique,"Ferrers Rd, Horsley Park NSW 2175",-33.829525,150.873764
 10,Moda Couture,"Northcote Rd, Glebe NSW 2037",-33.873882,151.177460
 11,Taco Bell,"2450 Baseline Rd, Boulder, CO 80305",39.999790,-105.262350
+14,Taco Bell,"3210 Arapahoe Ave, Boulder, CO 80303",40.014330,-105.251040
+15,Taco Bell,"3255 28th St, Boulder, CO 80301",40.033780,-105.259140
+16,McDonald's,"2920 Baseline Rd, Boulder, CO 80303",39.999470,-105.255157
+17,McDonald's,"1800 28th St, Boulder, CO 80301",40.01959,-105.25832
+18,Wendy's,"2420 Baseline Rd, Boulder, CO 80305",40.000099,-105.263252
+19,Wendy's,"5350 Arapahoe Rd, Boulder, CO 80303",40.014259,-105.227493
+20,Safeway," 910 W Cherry St, Louisville, CO 80027",39.9641,-105.1617

@@ -1,29 +1,24 @@
-body, html {
-  background-color: lightgray;
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  height: 100vh;
-  overflow: hidden;
+body {
+  margin: 2px;
+  margin-left: 2px;
+  margin-right: 2px;
+  height: 98vh;
 }
 
 html {
+  background-color: rgb(64, 219, 183);
+  margin: 2px;
   border: 4px solid black;
 }
 
 #submit_form {
   float: left;
-  width: 38%;
-  height: 96vh;
-  overflow: hidden;
+  width: 40%;
+  height: 90vh;
 }
-
 
 #map {
   float: right;
-  margin: 0px;
-  height: 96vh;
+  height: 100vh;
   width: 74%;
-  overflow: hidden;
 }

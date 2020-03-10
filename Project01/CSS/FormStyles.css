@@ -25,6 +25,7 @@ button {
   cursor: pointer;
   width: 12%;
   opacity: 0.9;
+  position: relative;
 }
 
 button:hover {
@@ -47,6 +48,9 @@ button:hover {
 .signupbtn {
   float: right;
   width: 25%;
+}
+.locationbtn {
+  width:25%;
 }
 
 /* Add padding to container elements */
