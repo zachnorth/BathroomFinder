@@ -16,18 +16,18 @@ $parnode = $dom->appendChild($node);
 $conn = mysqli_connect($DBHOST, $DBUSERNAME, $DBPASSWORD);
 if (!$conn) 
 {
-    die("Not Connected : " . mysql_error());
+    die("Not Connected : " . mysqli_error());
 }
 
 //set the active mysql database
 $db_selected = mysqli_select_db($conn, $DBNAME);
 if(!$db_selected)
 {
-    die("Can\'t use db : " . mysql_error());
+    die("Can\'t use db : " . mysqli_error());
 }
 
 //search the rows in the markers table
-$query = sprintf("SELECT id, name, address, lat, lng, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) 
+$query = sprintf("SELECT id, name, address, lat, lng, description, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) 
                 + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20",
     mysqli_real_escape_string($conn, $center_lat),
     mysqli_real_escape_string($conn, $center_lng),
@@ -38,7 +38,7 @@ $result = mysqli_query($conn, $query);
 
 if(!$result)
 {
-    die("Invalid query : " . mysql_error());
+    die("Invalid query : " . mysqli_error($conn));
 }
 
 header("Content-type: text/xml");
@@ -55,6 +55,7 @@ if(mysqli_num_rows($result) > 0)
         $newnode->setAttribute("address", $row['address']);
         $newnode->setAttribute("lat", $row['lat']);
         $newnode->setAttribute("lng", $row['lng']);
+        $newnode->setAttribute("description", $row['description']);
         $newnode->setAttribute("distance", $row['distance']);
     }
 }

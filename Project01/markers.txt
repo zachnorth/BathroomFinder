@@ -16,3 +16,7 @@
 18,Wendy's,"2420 Baseline Rd, Boulder, CO 80305",40.000099,-105.263252
 19,Wendy's,"5350 Arapahoe Rd, Boulder, CO 80303",40.014259,-105.227493
 20,Safeway," 910 W Cherry St, Louisville, CO 80027",39.9641,-105.1617
+21, APS Soccer Complex,"8101 Rainbow Blvd NW, Albuquerque, NM 87114",35.273209,-106.7368
+22,Taco Bell,"1530 S College Ave, Fort Collins, CO 80524",40.567478,-105.076477,"Some Fiery Poopahs"
+23,Taco Bell,"1227 E Magnolia St, Fort Collins, CO 80524",40.583930,-105.056160,"This one wasn't so bad"
+24,Taco Bell,"1527 W Elizabeth St, Fort Collins, CO 80521",40.573950,-105.104020,"This one was really bad..."

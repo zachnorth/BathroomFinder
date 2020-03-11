@@ -30,41 +30,42 @@
 <div id="id02" class="modal">
   <span onclick="document.getElementById('id02').style.display='none' class="close" title="Close"
   Modal">times;</span>
-<form class="modal-content action" action="PHP/NewLocation.php" method="post">
+<form class="modal-content action" action="PHP/NewBathroom.php" method="post" id="NewLocationForm">
   <div class="container">
     <h2>New Bathroom</h2>
     <p>Please fill out the fields below to enter a new bathroom.</p>
     <hr>
 
-    <label for="city"><b>City</b></label>
-    <input type="text" placeholder="City" name="city" required><br>
 
-    <label for="state"><b>State</b></label>
-    <input type="text" placeholder="State" name="state" required><br>
+    <input type="hidden" name="address" id="address" />
+    <input type="hidden" name="lat" id="lat" />
+    <input type="hidden" name="lng" id="lng" />
 
     <label for="name"><b>Establishment Name</b></label>
-    <input type="text" placeholder="Name" name="est_name" required><br>
+    <input type="text" placeholder="Name" name="name" required><br>
+
+    <label for="Description"><b>Description</b></label>
+    <input type="text" placeholder="Description" name="description" id="description" required><br>
 
     <label for="pay"><b>Pay</b></label><br>
     Yes: <input type="radio" name="pay" id="yes" value="1"><br>
     No: <input type="radio" name="pay" id="no" value="0"><br>
 
-    <label for="latitude"><b>Latitude</b></label>
-    <input type="text" placeholder="Latitude" name="latitude" required><br>
+    <label for="rating"><b>Rating: </b></label>
+    <select id="rating" label="Rating">
+      <option value="5" selected>5</option>
+      <option value="4">4</option>
+      <option value="3">3</option>
+      <option value="2">2</option>
+      <option value="1">1</option>
+    </select>
+    <br>
 
-    <label for="longitude"><b>Longitude</b></label>
-    <input type="text" placeholder="Longitude" name="longitude" required><br>
-
-    <label for="rating"><b>Rating</b></label>
-    <input type="text" placeholder="Rating" name="rating" required><br>
-
-    <label for="Description"><b>description</b></label>
-    <input type="text" placeholder="Description" name="description" required><br>
 
     <div class="clearfix">
       <button type="button" onclick="document.getElementById('id02').style.display='none'"
       class="cancelbtn">Cancel</button>
-      <button type="submit" class="signupbtn">Submit Location</button>
+      <button type="submit" class="signupbtn" id="submit">Submit Location</button>
     </div>
   </div>
 </form>
@@ -80,7 +81,7 @@
     <hr>
     <br>
       <label for="raddressInput">Search location:</label>
-      <input type="text" id="addressInput" size="15"/>
+      <input type="text" id="addressInput" size="15" name="addressInput"/>
       <label for="radiusSelect">Radius:</label>
       <select id="radiusSelect" label="Radius">
           <option value="16.0934" selected>10 Miles</option>
@@ -114,6 +115,24 @@ window.onclick = function(event) {
 
 }
 
+$(document).ready(function()
+{
+  $('#description').keypress(function(e)
+  {
+    if(e.keyCode == 13)
+    {
+      $('#submit').click();
+    }
+  })
+  $('#addressInput').keypress(function(e)
+  {
+    if(e.keyCode == 13)
+    {
+      $('#searchButton').click();
+    }
+  })
+})
+
 </script>
 
 <script>
@@ -122,6 +141,7 @@ window.onclick = function(event) {
   var infoWindow;
   var locationSelect;
   var current_position;
+  var descriptions = [];
 
   function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -172,6 +192,7 @@ window.onclick = function(event) {
 
   searchButton = document.getElementById('searchButton').onclick = searchLocations;
   searchButton1 = document.getElementById('searchButton1').onclick = searchLocationsNearHelper;
+  geocodeLatLng();
 
   locationSelect = document.getElementById('locationSelect');
   locationSelect.onchange = function() 
@@ -189,6 +210,33 @@ window.onclick = function(event) {
     searchLocationsNear(new google.maps.LatLng(current_position.lat, current_position.lng));
   }
 
+  function geocodeLatLng()
+  {
+    var geocoder = new google.maps.Geocoder;
+
+    document.getElementById('lat').value = current_position.lat;
+    document.getElementById('lng').value = current_position.lng;
+    var latlng = new google.maps.LatLng(current_position.lat, current_position.lng);
+    geocoder.geocode({'location': latlng}, function(results, status)
+    {
+      if(status == 'OK')
+      {
+        if(results[0])
+        {
+          document.getElementById('address').value = results[0].formatted_address;
+        }
+        else
+        {
+          window.alert('No Results Found');
+        }
+      }
+      else
+      {
+        window.alert('Geocoder failed due to: ' + status);
+      }
+    });
+
+  }
   function searchLocations()
   {
       var address = document.getElementById('addressInput').value;
@@ -226,7 +274,8 @@ window.onclick = function(event) {
   {
       document.getElementById('id04').style.display = 'none';
       clearLocations();
-      createMarker(new google.maps.LatLng(center.lat, center.lng), "Current Position", "Right Here Dummy!");
+      createOption("Your Location", 0.0, 0)
+      createMarker(new google.maps.LatLng(center.lat, center.lng), "Current Position", "Right Here Dummy!", "Literally right where you are standing");
       var radius = document.getElementById('radiusSelect').value;
       var searchUrl = "PHP/FindClosestBathroom.php?lat=" + center.lat() + "&lng=" + center.lng() + "&radius=" + radius;
       downloadUrl(searchUrl, function(data)
@@ -234,18 +283,19 @@ window.onclick = function(event) {
           var xml = parseXml(data);
           var markerNodes = xml.documentElement.getElementsByTagName("marker");
           var bounds = new google.maps.LatLngBounds();
-          for(var i = 0; i < markerNodes.length; i++)
+          for(var i = 1; i < markerNodes.length + 1; i++)
           {
-              var id = markerNodes[i].getAttribute("id");
-              var name = markerNodes[i].getAttribute("name");
-              var address = markerNodes[i].getAttribute("address");
-              var distance = parseFloat(markerNodes[i].getAttribute("distance"));
+              var id = markerNodes[i - 1].getAttribute("id");
+              var name = markerNodes[i - 1].getAttribute("name");
+              var address = markerNodes[i - 1].getAttribute("address");
+              var distance = parseFloat(markerNodes[i - 1].getAttribute("distance"));
+              var description = markerNodes[i - 1].getAttribute("description");
               var latlng = new google.maps.LatLng(
-                  parseFloat(markerNodes[i].getAttribute("lat")),
-                  parseFloat(markerNodes[i].getAttribute("lng")));
+                  parseFloat(markerNodes[i - 1].getAttribute("lat")),
+                  parseFloat(markerNodes[i - 1].getAttribute("lng")));
 
             createOption(name, distance, i);
-            createMarker(latlng, name, address);
+            createMarker(latlng, name, address, description);
             bounds.extend(latlng);
           }
           map.fitBounds(bounds);
@@ -257,10 +307,9 @@ window.onclick = function(event) {
       });
   }
 
-  function createMarker(latlng, name, address)
+  function createMarker(latlng, name, address, description)
   {
-    alert(address);
-      var html = "<b>" + name + "</b><br/>" + address;
+      var html = "<b>" + name + "</b><br/>" + address + "<br/><br/> <b>Description: </b>" + description;
       var marker = new google.maps.Marker({
           map: map,
           position: latlng
@@ -315,6 +364,10 @@ window.onclick = function(event) {
       }
   }
 
+  function NewLocation(loc)
+  {
+    var searchUrl = "PHP/NewBathroom.php?&lat=" + loc.lat() + "&lng=" + loc.lng();
+  }
   function doNothing() {}
 </script>
 
