@@ -27,7 +27,7 @@ if(!$db_selected)
 }
 
 //search the rows in the markers table
-$query = sprintf("SELECT id, name, address, lat, lng, description, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) 
+$query = sprintf("SELECT id, name, address, lat, lng, description, rating, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) 
                 + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20",
     mysqli_real_escape_string($conn, $center_lat),
     mysqli_real_escape_string($conn, $center_lng),
@@ -56,6 +56,7 @@ if(mysqli_num_rows($result) > 0)
         $newnode->setAttribute("lat", $row['lat']);
         $newnode->setAttribute("lng", $row['lng']);
         $newnode->setAttribute("description", $row['description']);
+        $newnode->setAttribute("rating", $row['rating']);
         $newnode->setAttribute("distance", $row['distance']);
     }
 }

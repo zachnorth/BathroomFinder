@@ -7,6 +7,7 @@ $lng = filter_input(INPUT_POST, 'lng');
 $address = filter_input(INPUT_POST, 'address');
 $name = filter_input(INPUT_POST, 'name');
 $description = filter_input(INPUT_POST, 'description');
+$rating = filter_input(INPUT_POST, 'rating');
 
 
 $conn = mysqli_connect($DBHOST, $DBUSERNAME, $DBPASSWORD);
@@ -23,9 +24,9 @@ if(!$db_selected)
 }
 
 $query = "INSERT INTO markers (name, address, lat, 
-        lng, description)
+        lng, description, rating)
         values ('$name', '$address', '$lat',
-        '$lng', '$description')";
+        '$lng', '$description', '$rating')";
 
 if($conn->query($query))
 {

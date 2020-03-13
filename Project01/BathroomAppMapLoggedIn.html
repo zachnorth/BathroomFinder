@@ -24,7 +24,7 @@
 
 
 <div>
-  <select id="locationSelect" style="width: 10%; "></select>
+  <select id="locationSelect" style="width: 10%;"></select>
 </div>
 
 <div id="id02" class="modal">
@@ -52,7 +52,7 @@
     No: <input type="radio" name="pay" id="no" value="0"><br>
 
     <label for="rating"><b>Rating: </b></label>
-    <select id="rating" label="Rating">
+    <select id="rating" name="rating" label="Rating">
       <option value="5" selected>5</option>
       <option value="4">4</option>
       <option value="3">3</option>
@@ -65,7 +65,7 @@
     <div class="clearfix">
       <button type="button" onclick="document.getElementById('id02').style.display='none'"
       class="cancelbtn">Cancel</button>
-      <button type="submit" class="signupbtn" id="submit">Submit Location</button>
+      <button type="submit" class="signupbtn" id="submit">Submit New Location</button>
     </div>
   </div>
 </form>
@@ -101,6 +101,17 @@
   </div>
 </form>
 </div>
+
+<div>
+  <label for="ratingDisplay" style="color: rgb(173, 239, 255);"><b>Rating</b>:</label>
+  <p id="ratingDisplay" style="color:ghostwhite"></p>
+</div>
+<br>
+<div id="descriptionBox">
+  <label for="descriptionTextArea" style="color: rgb(173, 239, 255);"><b>Description</b>:</label><br>
+  <p id="descriptionTextArea" style="color: ghostwhite;"></p>
+</div>
+
 
 <script>
 
@@ -192,7 +203,7 @@ $(document).ready(function()
 
   searchButton = document.getElementById('searchButton').onclick = searchLocations;
   searchButton1 = document.getElementById('searchButton1').onclick = searchLocationsNearHelper;
-  geocodeLatLng();
+  geocodeLatLng(current_position);
 
   locationSelect = document.getElementById('locationSelect');
   locationSelect.onchange = function() 
@@ -206,17 +217,16 @@ $(document).ready(function()
 
   function searchLocationsNearHelper()
   {
-    //createMarker(new google.maps.LatLng(current_position.lat, current_position.lng), "Current Position", "Where You Are Standing");
     searchLocationsNear(new google.maps.LatLng(current_position.lat, current_position.lng));
   }
 
-  function geocodeLatLng()
+  function geocodeLatLng(center)
   {
     var geocoder = new google.maps.Geocoder;
 
-    document.getElementById('lat').value = current_position.lat;
-    document.getElementById('lng').value = current_position.lng;
-    var latlng = new google.maps.LatLng(current_position.lat, current_position.lng);
+    document.getElementById('lat').value = center.lat;
+    document.getElementById('lng').value = center.lng;
+    var latlng = new google.maps.LatLng(center.lat, center.lng);
     geocoder.geocode({'location': latlng}, function(results, status)
     {
       if(status == 'OK')
@@ -274,8 +284,24 @@ $(document).ready(function()
   {
       document.getElementById('id04').style.display = 'none';
       clearLocations();
-      createOption("Your Location", 0.0, 0)
-      createMarker(new google.maps.LatLng(center.lat, center.lng), "Current Position", "Right Here Dummy!", "Literally right where you are standing");
+
+      createOption("Current Location", 0.0, 0);
+      var html = "<b>Current Location</b><br/>" + "Lat: " + center.lat() + "<br/>Lng: " + center.lng();
+      var marker = new google.maps.Marker(
+        {
+          map: map,
+          position: new google.maps.LatLng(center.lat(), center.lng())
+        }
+      );
+      google.maps.event.addListener(marker, 'click', function()
+      {
+        infoWindow.setContent(html);
+        infoWindow.open(map, marker);
+        document.getElementById('ratingDisplay').innerHTML = '';
+        document.getElementById('descriptionTextArea').innerHTML = '';
+      })
+      marker.setMap(map);
+      markers.push(marker);
       var radius = document.getElementById('radiusSelect').value;
       var searchUrl = "PHP/FindClosestBathroom.php?lat=" + center.lat() + "&lng=" + center.lng() + "&radius=" + radius;
       downloadUrl(searchUrl, function(data)
@@ -290,12 +316,13 @@ $(document).ready(function()
               var address = markerNodes[i - 1].getAttribute("address");
               var distance = parseFloat(markerNodes[i - 1].getAttribute("distance"));
               var description = markerNodes[i - 1].getAttribute("description");
+              var rating = markerNodes[i - 1].getAttribute("rating");
               var latlng = new google.maps.LatLng(
                   parseFloat(markerNodes[i - 1].getAttribute("lat")),
                   parseFloat(markerNodes[i - 1].getAttribute("lng")));
 
             createOption(name, distance, i);
-            createMarker(latlng, name, address, description);
+            createMarker(latlng, name, address, description, distance, rating);
             bounds.extend(latlng);
           }
           map.fitBounds(bounds);
@@ -304,21 +331,27 @@ $(document).ready(function()
               var markerNum = locationSelect.options[locationSelect.selectedIndex].value;
               google.maps.event.trigger(markers[markerNum], 'click');
           };
+          
+          //currentLocationMarker(new google.maps.LatLng(current_position.lat, current_position.lng));
       });
+      
   }
 
-  function createMarker(latlng, name, address, description)
+  function createMarker(latlng, name, address, description, distance, rating)
   {
-      var html = "<b>" + name + "</b><br/>" + address + "<br/><br/> <b>Description: </b>" + description;
+      var html = "<b>Name</b>: " + name + "</b><br/><b>Distance</b>: " + distance + " miles away<br/><b>Address</b>: " + address + "<br/><b>Rating</b>: " + rating + "<br/><b>Description: </b>" + description;
       var marker = new google.maps.Marker({
           map: map,
           position: latlng
+
       });
 
       google.maps.event.addListener(marker, 'click', function()
       {
           infoWindow.setContent(html);
           infoWindow.open(map, marker);
+          document.getElementById('descriptionTextArea').innerHTML = description;
+          document.getElementById('ratingDisplay').innerHTML = rating;
       });
       markers.push(marker);
   }
